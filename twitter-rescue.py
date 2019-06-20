@@ -36,13 +36,15 @@ for t in range(0, len(data)):
         'time' : data[t].created_at,
         'id' : data[t].id})
 
+# dynamically update the max id in my api call to move the starting point back to the end of my call
+
 tweet_data = pd.DataFrame.from_dict(tweet_list)
 
 csv_file_path = os.path.join(os.path.dirname(__file__), "data", 'data.csv')
 
 tweet_data.to_csv(csv_file_path, index= False)
 
-
+#https://www.afternerd.com/blog/python-string-contains/
 
 
 # convert to dict
