@@ -35,9 +35,21 @@ for t in range(0, len(data)):
         'time' : data[t].created_at,
         'id' : data[t].id})
 
+limit = client.rate_limit_status()
+
+
 breakpoint()
 
 # convert to dict
 # data[0].__dict__
 #data[0].text accessing elements
 
+
+###### ROADMAP
+# 1.) get longer duration of tweets
+
+# 2.) parse the text to test if my train and delay is in the text
+
+# 3.) message me that it is
+
+# 4.) deploy to heroku > schedule to run
