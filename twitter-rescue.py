@@ -4,6 +4,7 @@ from pprint import pprint
 import json
 from dotenv import load_dotenv
 import tweepy
+import pandas as pd
 
 load_dotenv()
 
@@ -26,7 +27,7 @@ client = tweepy.API(auth)
 
 user = client.me() # get information about the currently authenticated user
 
-data = client.user_timeline('NYCTSubway', count = 20,max_id = 1141476562350563329, exclude_replies = True , include_rts = False)
+data = client.user_timeline('NYCTSubway', count = 60,max_id = 1141476562350563329, exclude_replies = True , include_rts = False)
 
 tweet_list = []
 for t in range(0, len(data)):
@@ -35,10 +36,14 @@ for t in range(0, len(data)):
         'time' : data[t].created_at,
         'id' : data[t].id})
 
-limit = client.rate_limit_status()
+tweet_data = pd.DataFrame.from_dict(tweet_list)
+
+csv_file_path = os.path.join(os.path.dirname(__file__), "data", 'data.csv')
+
+tweet_data.to_csv(csv_file_path, index= False)
 
 
-breakpoint()
+
 
 # convert to dict
 # data[0].__dict__
@@ -53,3 +58,5 @@ breakpoint()
 # 3.) message me that it is
 
 # 4.) deploy to heroku > schedule to run
+
+# limit = client.rate_limit_status()
