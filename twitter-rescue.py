@@ -27,7 +27,8 @@ client = tweepy.API(auth)
 
 user = client.me() # get information about the currently authenticated user
 
-data = client.user_timeline('NYCTSubway', count = 60,max_id = 1141476562350563329, exclude_replies = True , include_rts = False)
+data = client.user_timeline('NYCTSubway', exclude_replies = True , include_rts = False)
+
 
 tweet_list = []
 for t in range(0, len(data)):
@@ -36,7 +37,24 @@ for t in range(0, len(data)):
         'time' : data[t].created_at,
         'id' : data[t].id})
 
-# dynamically update the max id in my api call to move the starting point back to the end of my call
+#call to get the most recent tweet > then from that tweet update the max id
+max_id = tweet_list[-1]['id']
+while len(tweet_list) < 20:
+        while_data = client.user_timeline('NYCTSubway',max_id = max_id, exclude_replies = True , include_rts = False)
+        for t in range(0, len(while_data)):
+                tweet_list.append({ # put an if statment before this to check for duplicate
+                        'text' : while_data[t].text,
+                        'time' : while_data[t].created_at,
+                        'id' : while_data[t].id})
+        max_id = tweet_list[-1]['id']
+
+# able to create list of tweets but not sure why I'm getting duplicates
+# create if statement to check for duplicate
+# may want to pull in the dict of other tweets id's for future reference
+        
+
+
+
 
 tweet_data = pd.DataFrame.from_dict(tweet_list)
 
@@ -45,6 +63,7 @@ csv_file_path = os.path.join(os.path.dirname(__file__), "data", 'data.csv')
 tweet_data.to_csv(csv_file_path, index= False)
 
 #https://www.afternerd.com/blog/python-string-contains/
+
 
 
 # convert to dict
@@ -56,8 +75,25 @@ tweet_data.to_csv(csv_file_path, index= False)
 # 1.) get longer duration of tweets
 
 # 2.) parse the text to test if my train and delay is in the text
+demo_text = [
+        'southbound 6 trains are delayed'
+        , 'southbound 3 trains are delayed'
+        , 'northbound 6 trains have resumed service'
+        , 'uptown f trains have resumed service'
+        , 'southbound 6 trains have residual delays']
 
-# 3.) message me that it is
+delay_catcher = 0
+for text in demo_text:
+        if '6 train' in text and 'delay' in text:
+                delay_catcher += 1
+                print(text)
+        else:
+                pass
+
+
+# 3.) parse time of tweets to ensure that they're relevant
+
+# next message me abou the delay
 
 # 4.) deploy to heroku > schedule to run
 
