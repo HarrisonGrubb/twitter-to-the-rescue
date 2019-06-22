@@ -40,7 +40,7 @@ tweet_id = [ids['id'] for ids in tweet_list]
 
 #call to get the most recent tweet > then from that tweet update the max id
 max_id = tweet_list[-1]['id']
-while len(tweet_list) < 20:
+while len(tweet_list) < 40:
         while_data = client.user_timeline('NYCTSubway',max_id = max_id, exclude_replies = True , include_rts = False)
         for t in range(0, len(while_data)):
                 if while_data[t].id in tweet_id:
@@ -53,17 +53,31 @@ while len(tweet_list) < 20:
                         tweet_id.append(while_data[t].id)
         max_id = tweet_list[-1]['id']
 
-# able to create list of tweets but not sure why I'm getting duplicates
-# create if statement to check for duplicate
-# may want to pull in the dict of other tweets id's for future reference
-        
 
+# my key words to search for as well as my trains on days traveled        
+delay_word = ['delay', 'slow', 'maintenance', 'brakes']
+train_dict = [
+        {'Monday' : ['6 train', '7 train', 'e train', 'c train']},
+        {'Tuesday' : ['6 train', '7 train']},
+        {'Wednesday' : ['6 train', '7 train', 'e train', 'c train']},
+        {'Thursday' : ['6 train', '7 train']},
+        {'Friday' : ['6 train', '7 train']},
+]
 
+# need to adjust for new dict style and filter based on day of week (super hard date time filter)
+for t in tweet_list:
+    if any(delay in t['text'] for delay in delay_word) and any(train in t['text'] for train in trains):
+        late_count += 1
+        if any(day in t['Day'] for day in Days):
+            late_date_count += 1
 
-
-tweet_data = pd.DataFrame.from_dict(tweet_list)
+new_tweet_data = pd.DataFrame.from_dict(tweet_list)
 
 csv_file_path = os.path.join(os.path.dirname(__file__), "data", 'data.csv')
+old_tweet_data = pd.read_csv(csv_file_path)
+
+tweet_data = new_tweet_data.append(old_tweet_data)
+tweet_data.drop_duplicates()
 
 tweet_data.to_csv(csv_file_path, index= False)
 
@@ -77,24 +91,8 @@ tweet_data.to_csv(csv_file_path, index= False)
 
 
 ###### ROADMAP
-# 1.) get longer duration of tweets
 
 # 2.) parse the text to test if my train and delay is in the text
-demo_text = [
-        'southbound 6 trains are delayed'
-        , 'southbound 3 trains are delayed'
-        , 'northbound 6 trains have resumed service'
-        , 'uptown f trains have resumed service'
-        , 'southbound 6 trains have residual delays']
-
-delay_catcher = 0
-for text in demo_text:
-        if '6 train' in text and 'delay' in text:
-                delay_catcher += 1
-                print(text)
-        else:
-                pass
-
 
 # 3.) parse time of tweets to ensure that they're relevant
 
@@ -102,4 +100,5 @@ for text in demo_text:
 
 # 4.) deploy to heroku > schedule to run
 
-# limit = client.rate_limit_status()
+limit = client.rate_limit_status()
+pprint(limit)
