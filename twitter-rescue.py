@@ -36,16 +36,21 @@ for t in range(0, len(data)):
         'text' : data[t].text,
         'time' : data[t].created_at,
         'id' : data[t].id})
+tweet_id = [ids['id'] for ids in tweet_list]
 
 #call to get the most recent tweet > then from that tweet update the max id
 max_id = tweet_list[-1]['id']
 while len(tweet_list) < 20:
         while_data = client.user_timeline('NYCTSubway',max_id = max_id, exclude_replies = True , include_rts = False)
         for t in range(0, len(while_data)):
-                tweet_list.append({ # put an if statment before this to check for duplicate
-                        'text' : while_data[t].text,
-                        'time' : while_data[t].created_at,
-                        'id' : while_data[t].id})
+                if while_data[t].id in tweet_id:
+                        pass
+                else:
+                        tweet_list.append({ # put an if statment before this to check for duplicate
+                                'text' : while_data[t].text,
+                                'time' : while_data[t].created_at,
+                                'id' : while_data[t].id})
+                        tweet_id.append(while_data[t].id)
         max_id = tweet_list[-1]['id']
 
 # able to create list of tweets but not sure why I'm getting duplicates
