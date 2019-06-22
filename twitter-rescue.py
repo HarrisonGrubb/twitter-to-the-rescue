@@ -5,7 +5,8 @@ import json
 from dotenv import load_dotenv
 import tweepy
 import pandas as pd
-
+from pytz import timezone
+from dateutil import tz
 load_dotenv()
 
 
@@ -40,7 +41,7 @@ tweet_id = [ids['id'] for ids in tweet_list]
 
 #call to get the most recent tweet > then from that tweet update the max id
 max_id = tweet_list[-1]['id']
-while len(tweet_list) < 40:
+while len(tweet_list) < 4:
         while_data = client.user_timeline('NYCTSubway',max_id = max_id, exclude_replies = True , include_rts = False)
         for t in range(0, len(while_data)):
                 if while_data[t].id in tweet_id:
@@ -53,23 +54,32 @@ while len(tweet_list) < 40:
                         tweet_id.append(while_data[t].id)
         max_id = tweet_list[-1]['id']
 
+x = 'y'
+
+# [ts['time'].replace(tzinfo = 'UTC') for ts in tweet_list]
+# [ts['time'].astimezone(timezone('US/Eastern')) for ts in tweet_list]
+
 
 # my key words to search for as well as my trains on days traveled        
 delay_word = ['delay', 'slow', 'maintenance', 'brakes']
-train_dict = [
-        {'Monday' : ['6 train', '7 train', 'e train', 'c train']},
-        {'Tuesday' : ['6 train', '7 train']},
-        {'Wednesday' : ['6 train', '7 train', 'e train', 'c train']},
-        {'Thursday' : ['6 train', '7 train']},
-        {'Friday' : ['6 train', '7 train']},
+travel_dict = [
+        {'Monday' : 0, 'trains' : ['6 train', '7 train', 'e train', 'c train']},
+        {'Tuesday' : 1, 'trains': ['6 train', '7 train']},
+        {'Wednesday' : 2, 'trains': ['6 train', '7 train', 'e train', 'c train']},
+        {'Thursday' : 3, 'trains': ['6 train', '7 train']},
+        {'Friday' : 4, 'trains' : ['6 train', '7 train']},
 ]
 
+for twit in tweet_list:
+        if any()        
+
+# .weekday() to get day of week 0 is monday 6 is sunday
 # need to adjust for new dict style and filter based on day of week (super hard date time filter)
-for t in tweet_list:
-    if any(delay in t['text'] for delay in delay_word) and any(train in t['text'] for train in trains):
-        late_count += 1
-        if any(day in t['Day'] for day in Days):
-            late_date_count += 1
+# for t in tweet_list:
+#     if any(delay in t['text'] for delay in delay_word) and any(train in t['text'] for train in trains):
+#         late_count += 1
+#         if any(day in t['Day'] for day in Days):
+#             late_date_count += 1
 
 new_tweet_data = pd.DataFrame.from_dict(tweet_list)
 
@@ -82,7 +92,8 @@ tweet_data.drop_duplicates()
 tweet_data.to_csv(csv_file_path, index= False)
 
 #https://www.afternerd.com/blog/python-string-contains/
-
+# timezone question
+#https://stackoverflow.com/questions/6935225/twitter-time-date-stamp-which-time-zone-is-it
 
 
 # convert to dict
@@ -101,4 +112,6 @@ tweet_data.to_csv(csv_file_path, index= False)
 # 4.) deploy to heroku > schedule to run
 
 limit = client.rate_limit_status()
-pprint(limit)
+print(limit['resources']['statuses']['/statuses/user_timeline'])
+
+breakpoint()
