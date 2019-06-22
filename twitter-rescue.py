@@ -59,19 +59,27 @@ x = 'y'
 # [ts['time'].replace(tzinfo = 'UTC') for ts in tweet_list]
 # [ts['time'].astimezone(timezone('US/Eastern')) for ts in tweet_list]
 
+user_travel = [{'user' : 'user1', 'commutes' : {'0' : ['6 train', '7 train'], '5' : ['f train', 'a train']}},
+              {'user' : 'user2', 'commutes' : {'6' : ['3 train', '2 train'], '5' : ['a train', 'c train']}}]
+
+breakpoint()
+
+for user in user_travel:
+    for twit in tweet_list:
+        if any(user['commutes'][twit['time'].weekday()] in twit['text']):
+            print('found one')
 
 # my key words to search for as well as my trains on days traveled        
 delay_word = ['delay', 'slow', 'maintenance', 'brakes']
-travel_dict = [
-        {'Monday' : 0, 'trains' : ['6 train', '7 train', 'e train', 'c train']},
-        {'Tuesday' : 1, 'trains': ['6 train', '7 train']},
-        {'Wednesday' : 2, 'trains': ['6 train', '7 train', 'e train', 'c train']},
-        {'Thursday' : 3, 'trains': ['6 train', '7 train']},
-        {'Friday' : 4, 'trains' : ['6 train', '7 train']},
+train_dict = [
+        {'Monday' : ['6 train', '7 train', 'e train', 'c train']},
+        {'Tuesday' : ['6 train', '7 train']},
+        {'Wednesday' : ['6 train', '7 train', 'e train', 'c train']},
+        {'Thursday' : ['6 train', '7 train']},
+        {'Friday' : ['6 train', '7 train']},
 ]
 
-for twit in tweet_list:
-        if any()        
+        
 
 # .weekday() to get day of week 0 is monday 6 is sunday
 # need to adjust for new dict style and filter based on day of week (super hard date time filter)
