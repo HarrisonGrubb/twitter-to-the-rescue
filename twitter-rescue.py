@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 import os
 from pprint import pprint
 import json
@@ -7,6 +7,7 @@ import tweepy
 import pandas as pd
 from pytz import timezone
 from dateutil import tz
+import arrow
 load_dotenv()
 
 
@@ -56,27 +57,31 @@ while len(tweet_list) < 4:
 
 x = 'y'
 
-[ts['time'].replace(tzinfo = timezone('UTC')) for ts in tweet_list]
-# [ts['time'].astimezone(timezone('US/Eastern')) for ts in tweet_list]
-
-[print(type(ts['time'])) for ts in tweet_list]
-[print(ts['time'].strftime("%Y-%m-%d %H:%M:%S %Z%z")) for ts in tweet_list]
+breakpoint()
+# all totally fucking useless as nothing fucking changes the fucking time
+# [ts['time'].to('UTC') for ts in tweet_list]
 
 
-user_travel = [{'user' : 'user1', 'commutes' : {'0' : ['6 train', '7 train'], '5' : ['f train', 'a train']}},
+# [datetime.strptime(str(ts['time']), "%Y-%m-%d %H:%M:%S") for ts in tweet_list]
+# [ts['time'].replace(tzinfo = timezone('UTC')) for ts in tweet_list]
+
+# [print(type(ts['time'])) for ts in tweet_list]
+# [print(ts['time'].strftime("%Y-%m-%d %H:%M:%S %Z%z")) for ts in tweet_list]
+
+
+user_travel = [{'user' : 'user1', 'commutes' : {'0' : ['6 train', '7 train'], '5' : ['7 train', 'a train']}},
               {'user' : 'user2', 'commutes' : {'6' : ['3 train', '2 train'], '5' : ['a train', 'c train']}}]
 
 delay_word = ['delay', 'slow', 'maintenance', 'brakes']
 
+# update today to be dynamic
 today = '5'
 users_to_email = []
 for twit in tweet_list:
     for user in user_travel:
-        for commute in user['commutes']:
+        for commute in user['commutes'][today]:
             if commute in twit['text']and any(delay in twit['text'] for delay in delay_word):
                 users_to_email.append({'user' : user, 'tweet_text' : twit['text']})
-
-# my key words to search for as well as my trains on days traveled        
 
         
 
