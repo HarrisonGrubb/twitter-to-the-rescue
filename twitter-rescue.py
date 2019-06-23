@@ -56,28 +56,27 @@ while len(tweet_list) < 4:
 
 x = 'y'
 
-# [ts['time'].replace(tzinfo = 'UTC') for ts in tweet_list]
+[ts['time'].replace(tzinfo = timezone('UTC')) for ts in tweet_list]
 # [ts['time'].astimezone(timezone('US/Eastern')) for ts in tweet_list]
+
+[print(type(ts['time'])) for ts in tweet_list]
+[print(ts['time'].strftime("%Y-%m-%d %H:%M:%S %Z%z")) for ts in tweet_list]
+
 
 user_travel = [{'user' : 'user1', 'commutes' : {'0' : ['6 train', '7 train'], '5' : ['f train', 'a train']}},
               {'user' : 'user2', 'commutes' : {'6' : ['3 train', '2 train'], '5' : ['a train', 'c train']}}]
 
-breakpoint()
+delay_word = ['delay', 'slow', 'maintenance', 'brakes']
 
-for user in user_travel:
-    for twit in tweet_list:
-        if any(user['commutes'][twit['time'].weekday()] in twit['text']):
-            print('found one')
+today = '5'
+users_to_email = []
+for twit in tweet_list:
+    for user in user_travel:
+        for commute in user['commutes']:
+            if commute in twit['text']and any(delay in twit['text'] for delay in delay_word):
+                users_to_email.append({'user' : user, 'tweet_text' : twit['text']})
 
 # my key words to search for as well as my trains on days traveled        
-delay_word = ['delay', 'slow', 'maintenance', 'brakes']
-train_dict = [
-        {'Monday' : ['6 train', '7 train', 'e train', 'c train']},
-        {'Tuesday' : ['6 train', '7 train']},
-        {'Wednesday' : ['6 train', '7 train', 'e train', 'c train']},
-        {'Thursday' : ['6 train', '7 train']},
-        {'Friday' : ['6 train', '7 train']},
-]
 
         
 
