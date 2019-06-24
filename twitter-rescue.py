@@ -88,15 +88,6 @@ delay_word = ['delay', 'slow', 'maintenance', 'brakes']
 today = str(datetime.now().weekday())
 users_to_email = []
 list_count = -1
-# for twit in tweet_list:
-#         for user in user_travel:
-#                 if today not in list(user['commutes'].keys()):
-#                         pass
-#                 else:
-#                         for commute in user['commutes'][today]:
-#                                 if commute in twit['text']and any(delay in twit['text'] for delay in delay_word):
-#                                         users_to_email.append({'user' : user['user'], 'tweet_text' : twit['text']})
-# ^ works but is jenky
 
 
 for user in user_travel:
@@ -109,19 +100,11 @@ for user in user_travel:
                         for commute in user['commutes'][today]:
                                 if commute in twit['text']and any(delay in twit['text'] for delay in delay_word):
                                         users_to_email[list_count]['tweet_text'].append(twit['text'])
-# attempting to refactor this into something easier to understand
-
-
-# for user, twit in zip()
-
-#users_to_email.append({'user' : user, 'tweet_text' : []})
-#users_to_email['tweet_text'].append(twit['text'])
-
-#need to assing multiple
 
 # for item in users_to_email:
 #         email_user = 
-        
+# write the logic to send email to user[x] and message is [tweets]        
+
 x = 'y'
 breakpoint()
 
@@ -171,3 +154,14 @@ limit = client.rate_limit_status()
 print(limit['resources']['statuses']['/statuses/user_timeline'])
 
 breakpoint()
+
+
+# for twit in tweet_list:
+#         for user in user_travel:
+#                 if today not in list(user['commutes'].keys()):
+#                         pass
+#                 else:
+#                         for commute in user['commutes'][today]:
+#                                 if commute in twit['text']and any(delay in twit['text'] for delay in delay_word):
+#                                         users_to_email.append({'user' : user['user'], 'tweet_text' : twit['text']})
+# ^  original for loop to find compare travelers and delay tweets works but is jenky
