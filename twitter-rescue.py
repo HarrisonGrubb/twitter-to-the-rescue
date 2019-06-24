@@ -8,6 +8,8 @@ import pandas as pd
 from pytz import timezone
 from dateutil import tz
 import arrow
+import sendgrid
+from sendgrid.helpers.mail import *
 load_dotenv()
 
 
@@ -15,6 +17,8 @@ CONSUMER_KEY = os.environ.get("TWITTER_API_KEY")
 CONSUMER_SECRET = os.environ.get("TWITTER_API_SECRET")
 ACCESS_TOKEN = os.environ.get("TWITTER_ACCESS_TOKEN")
 ACCESS_TOKEN_SECRET = os.environ.get("TWITTER_ACCESS_TOKEN_SECRET")
+SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "OOPS, please set env var called 'SENDGRID_API_KEY'")
+MY_EMAIL_ADDRESS = os.environ.get("MY_EMAIL_ADDRESS", "OOPS, please set env var called 'MY_EMAIL_ADDRESS'")
 
 # AUTHENTICATE
 
@@ -42,7 +46,7 @@ tweet_id = [ids['id'] for ids in tweet_list]
 
 #call to get the most recent tweet > then from that tweet update the max id
 max_id = tweet_list[-1]['id']
-while len(tweet_list) < 4:
+while len(tweet_list) < 20:
         while_data = client.user_timeline('NYCTSubway',max_id = max_id, exclude_replies = True , include_rts = False)
         for t in range(0, len(while_data)):
                 if while_data[t].id in tweet_id:
@@ -57,8 +61,8 @@ while len(tweet_list) < 4:
 
 x = 'y'
 
-breakpoint()
-# all totally fucking useless as nothing fucking changes the fucking time
+
+# all totally useless changing the time so far
 # [ts['time'].to('UTC') for ts in tweet_list]
 
 
@@ -69,19 +73,27 @@ breakpoint()
 # [print(ts['time'].strftime("%Y-%m-%d %H:%M:%S %Z%z")) for ts in tweet_list]
 
 
-user_travel = [{'user' : 'user1', 'commutes' : {'0' : ['6 train', '7 train'], '5' : ['7 train', 'a train']}},
+user_travel = [{'user' : 'harrison', 'commutes' : {
+        '0' : ['6 train', '7 train', 'e train', 'a train'],
+        '1' : ['7 train', '6 train'],
+        '2' : ['6 train', '7 train', 'e train', 'a train'],
+        '3' : ['7 train', '6 train'],
+        '4' : ['7 train', '6 train'],}},
               {'user' : 'user2', 'commutes' : {'6' : ['3 train', '2 train'], '5' : ['a train', 'c train']}}]
 
 delay_word = ['delay', 'slow', 'maintenance', 'brakes']
 
 # update today to be dynamic
-today = '5'
+today = str(datetime.now().weekday())
 users_to_email = []
 for twit in tweet_list:
-    for user in user_travel:
-        for commute in user['commutes'][today]:
-            if commute in twit['text']and any(delay in twit['text'] for delay in delay_word):
-                users_to_email.append({'user' : user, 'tweet_text' : twit['text']})
+        for user in user_travel:
+                if today not in list(user['commutes'].keys()):
+                        pass
+                else:
+                        for commute in user['commutes'][today]:
+                                if commute in twit['text']and any(delay in twit['text'] for delay in delay_word):
+                                        users_to_email.append({'user' : user, 'tweet_text' : twit['text']})
 
         
 

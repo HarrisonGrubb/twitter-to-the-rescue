@@ -2,3 +2,4 @@ tweepy
 twilio
 python-dotenv
 pandas
+sendgrid
