@@ -24,6 +24,7 @@ MY_EMAIL_ADDRESS = os.environ.get("MY_EMAIL_ADDRESS", "OOPS, please set env var 
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+sg = sendgrid.SendGridAPIClient(apikey=SENDGRID_API_KEY)
 
 # INITIALIZE API CLIENT
 
@@ -98,13 +99,19 @@ for twit in tweet_list:
         
 
 # .weekday() to get day of week 0 is monday 6 is sunday
-# need to adjust for new dict style and filter based on day of week (super hard date time filter)
-# for t in tweet_list:
-#     if any(delay in t['text'] for delay in delay_word) and any(train in t['text'] for train in trains):
-#         late_count += 1
-#         if any(day in t['Day'] for day in Days):
-#             late_date_count += 1
 
+#emailing out 
+# may need to put in a function so I can iteratively fill out the email
+from_email = Email(MY_EMAIL_ADDRESS)
+to_email = Email(MY_EMAIL_ADDRESS)
+subject = "Example Notification"
+message_text = "Hello, \n\nThis is a message from your personal notification service.\n\nCustomize this example notification content to make it useful for you! Maybe weather info? Maybe stock prices? Let your creativity guide you!"
+content = Content("text/plain", message_text)
+mail = Mail(from_email, subject, to_email, content)
+
+
+
+# writing data to file
 new_tweet_data = pd.DataFrame.from_dict(tweet_list)
 
 csv_file_path = os.path.join(os.path.dirname(__file__), "data", 'data.csv')
