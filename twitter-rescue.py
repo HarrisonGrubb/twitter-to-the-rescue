@@ -24,7 +24,7 @@ MY_EMAIL_ADDRESS = os.environ.get("MY_EMAIL_ADDRESS", "OOPS, please set env var 
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
-sg = sendgrid.SendGridAPIClient(apikey=SENDGRID_API_KEY)
+sg = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)
 
 # INITIALIZE API CLIENT
 
@@ -60,7 +60,7 @@ while len(tweet_list) < 20:
                         tweet_id.append(while_data[t].id)
         max_id = tweet_list[-1]['id']
 
-x = 'y'
+
 
 
 # all totally useless changing the time so far
@@ -84,30 +84,56 @@ user_travel = [{'user' : 'harrison', 'commutes' : {
 
 delay_word = ['delay', 'slow', 'maintenance', 'brakes']
 
-# update today to be dynamic
+# .weekday() to get day of week 0 is monday 6 is sunday
 today = str(datetime.now().weekday())
 users_to_email = []
-for twit in tweet_list:
-        for user in user_travel:
-                if today not in list(user['commutes'].keys()):
-                        pass
-                else:
+list_count = -1
+# for twit in tweet_list:
+#         for user in user_travel:
+#                 if today not in list(user['commutes'].keys()):
+#                         pass
+#                 else:
+#                         for commute in user['commutes'][today]:
+#                                 if commute in twit['text']and any(delay in twit['text'] for delay in delay_word):
+#                                         users_to_email.append({'user' : user['user'], 'tweet_text' : twit['text']})
+# ^ works but is jenky
+
+
+for user in user_travel:
+        if today not in list(user['commutes'].keys()):
+                pass
+        else:
+                users_to_email.append({'user' : user['user'], 'tweet_text' : []})
+                list_count += 1
+                for twit in tweet_list:
                         for commute in user['commutes'][today]:
                                 if commute in twit['text']and any(delay in twit['text'] for delay in delay_word):
-                                        users_to_email.append({'user' : user, 'tweet_text' : twit['text']})
+                                        users_to_email[list_count]['tweet_text'].append(twit['text'])
+# attempting to refactor this into something easier to understand
 
+
+# for user, twit in zip()
+
+#users_to_email.append({'user' : user, 'tweet_text' : []})
+#users_to_email['tweet_text'].append(twit['text'])
+
+#need to assing multiple
+
+# for item in users_to_email:
+#         email_user = 
         
-
-# .weekday() to get day of week 0 is monday 6 is sunday
+x = 'y'
+breakpoint()
 
 #emailing out 
 # may need to put in a function so I can iteratively fill out the email
-from_email = Email(MY_EMAIL_ADDRESS)
-to_email = Email(MY_EMAIL_ADDRESS)
-subject = "Example Notification"
-message_text = "Hello, \n\nThis is a message from your personal notification service.\n\nCustomize this example notification content to make it useful for you! Maybe weather info? Maybe stock prices? Let your creativity guide you!"
-content = Content("text/plain", message_text)
-mail = Mail(from_email, subject, to_email, content)
+# def email_out():
+#         from_email = Email(MY_EMAIL_ADDRESS)
+#         to_email = Email(MY_EMAIL_ADDRESS)
+#         subject = "Example Notification"
+#         message_text = "Hello, \n\nThis is a message from your personal notification service.\n\nCustomize this example notification content to make it useful for you! Maybe weather info? Maybe stock prices? Let your creativity guide you!"
+#         content = Content("text/plain", message_text)
+#         mail = Mail(from_email, subject, to_email, content)
 
 
 
@@ -134,7 +160,6 @@ tweet_data.to_csv(csv_file_path, index= False)
 
 ###### ROADMAP
 
-# 2.) parse the text to test if my train and delay is in the text
 
 # 3.) parse time of tweets to ensure that they're relevant
 
