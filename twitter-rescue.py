@@ -5,7 +5,7 @@ import json
 from dotenv import load_dotenv
 import tweepy
 import pandas as pd
-from pytz import timezone
+import pytz
 from dateutil import tz
 import arrow
 import sendgrid
@@ -36,6 +36,32 @@ user = client.me() # get information about the currently authenticated user
 
 data = client.user_timeline('NYCTSubway', exclude_replies = True , include_rts = False)
 
+#timezone fix
+utc = pytz.timezone('UTC')
+
+#function for later
+def email_out(reciever, delays):
+        from_email = Email(MY_EMAIL_ADDRESS)
+        to_email = Email(MY_EMAIL_ADDRESS)
+        subject = f"Bad News{reciever}"
+        message_text = f"You're going to be later for the following reasons: {delays}"
+        content = Content("text/plain", message_text)
+        mail = Mail(from_email, subject, to_email, content)
+        response = sg.client.mail.send.post(request_body=mail.get())
+        pp = pprint.PrettyPrinter(indent=4)
+        print("----------------------")
+        print("EMAIL")
+        print("----------------------")
+        print("RESPONSE: ", type(response))
+        print("STATUS:", response.status_code) #> 202 means success
+        print("HEADERS:")
+        pp.pprint(dict(response.headers))
+        print("BODY:")
+        print(response.body) #> this might be empty. it's ok.)
+
+
+
+
 
 tweet_list = []
 for t in range(0, len(data)):
@@ -55,7 +81,7 @@ while len(tweet_list) < 20:
                 else:
                         tweet_list.append({ # put an if statment before this to check for duplicate
                                 'text' : while_data[t].text,
-                                'time' : while_data[t].created_at,
+                                'time' : while_data[t].created_at.astimezone(utc),
                                 'id' : while_data[t].id})
                         tweet_id.append(while_data[t].id)
         max_id = tweet_list[-1]['id']
@@ -75,7 +101,7 @@ while len(tweet_list) < 20:
 
 
 user_travel = [{'user' : 'harrison', 'commutes' : {
-        '0' : ['6 train', '7 train', 'e train', 'a train'],
+        '0' : ['6 train', '7 train', 'Northbound E', 'Southbound E', 'Southbound A', 'Northbound A'],
         '1' : ['7 train', '6 train'],
         '2' : ['6 train', '7 train', 'e train', 'a train'],
         '3' : ['7 train', '6 train'],
@@ -101,20 +127,26 @@ for user in user_travel:
                                 if commute in twit['text']and any(delay in twit['text'] for delay in delay_word):
                                         users_to_email[list_count]['tweet_text'].append(twit['text'])
 
-# for item in users_to_email:
-#         email_user = 
+
+for recipient in users_to_email:
+        reciever = recipient['user']
+        delays = recipient['tweet_text'][1:]
+        delays = "\n".join(delays)
+        reciever = str(reciever)
+        delays = str(delays)        
+        email_out(reciever, delays)
+
 # write the logic to send email to user[x] and message is [tweets]        
 
 x = 'y'
-breakpoint()
+# breakpoint()
 
-#emailing out 
-# may need to put in a function so I can iteratively fill out the email
-# def email_out():
+
+# def email_out(recipient):
 #         from_email = Email(MY_EMAIL_ADDRESS)
 #         to_email = Email(MY_EMAIL_ADDRESS)
-#         subject = "Example Notification"
-#         message_text = "Hello, \n\nThis is a message from your personal notification service.\n\nCustomize this example notification content to make it useful for you! Maybe weather info? Maybe stock prices? Let your creativity guide you!"
+#         subject = f"Bad News{recipient['user']}"
+#         message_text = f"You're going to be later for the following reasons: \n\n{text['tweet_text'] for text in recipient}"
 #         content = Content("text/plain", message_text)
 #         mail = Mail(from_email, subject, to_email, content)
 
@@ -153,7 +185,7 @@ tweet_data.to_csv(csv_file_path, index= False)
 limit = client.rate_limit_status()
 print(limit['resources']['statuses']['/statuses/user_timeline'])
 
-breakpoint()
+# breakpoint()
 
 
 # for twit in tweet_list:
