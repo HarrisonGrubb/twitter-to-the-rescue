@@ -9,7 +9,8 @@ import pytz
 from dateutil import tz
 import arrow
 import sendgrid
-from sendgrid.helpers.mail import *
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 load_dotenv()
 
 
@@ -18,7 +19,8 @@ CONSUMER_SECRET = os.environ.get("TWITTER_API_SECRET")
 ACCESS_TOKEN = os.environ.get("TWITTER_ACCESS_TOKEN")
 ACCESS_TOKEN_SECRET = os.environ.get("TWITTER_ACCESS_TOKEN_SECRET")
 SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "OOPS, please set env var called 'SENDGRID_API_KEY'")
-MY_EMAIL_ADDRESS = os.environ.get("MY_EMAIL_ADDRESS", "OOPS, please set env var called 'MY_EMAIL_ADDRESS'")
+MY_ADDRESS = os.environ.get("MY_EMAIL_ADDRESS", "OOPS, please set env var called 'MY_EMAIL_ADDRESS'")
+sgclient = SendGridAPIClient(SENDGRID_API_KEY) #> <class 'sendgrid.sendgrid.SendGridAPIClient>
 
 # AUTHENTICATE
 
@@ -41,24 +43,19 @@ utc = pytz.timezone('UTC')
 
 #function for later
 def email_out(reciever, delays):
-        from_email = Email(MY_EMAIL_ADDRESS)
-        to_email = Email(MY_EMAIL_ADDRESS)
-        subject = f"Bad News{reciever}"
-        message_text = f"You're going to be later for the following reasons: {delays}"
-        content = Content("text/plain", message_text)
-        mail = Mail(from_email, subject, to_email, content)
-        response = sg.client.mail.send.post(request_body=mail.get())
-        pp = pprint.PrettyPrinter(indent=4)
-        print("----------------------")
-        print("EMAIL")
-        print("----------------------")
-        print("RESPONSE: ", type(response))
-        print("STATUS:", response.status_code) #> 202 means success
-        print("HEADERS:")
-        pp.pprint(dict(response.headers))
-        print("BODY:")
-        print(response.body) #> this might be empty. it's ok.)
+        subject = "Bummer "+reciever
+        html_content = "You're going to be late for the following reasons \n" + delays
+        
+        message = Mail(from_email=MY_ADDRESS, to_emails=MY_ADDRESS, subject=subject, html_content=html_content)
+        try:
+                response = sgclient.send(message)
+                print("RESPONSE:", type(response)) #> <class 'python_http_client.client.Response'>
+                print(response.status_code) #> 202 indicates SUCCESS
+                print(response.body)
+                print(response.headers)
 
+        except Exception as e:
+                print("OOPS", e.message)
 
 
 
@@ -130,27 +127,14 @@ for user in user_travel:
 
 for recipient in users_to_email:
         reciever = recipient['user']
-        delays = recipient['tweet_text'][1:]
-        delays = "\n".join(delays)
+        delays = recipient['tweet_text']
         reciever = str(reciever)
         delays = str(delays)        
         email_out(reciever, delays)
 
-# write the logic to send email to user[x] and message is [tweets]        
 
-x = 'y'
+
 # breakpoint()
-
-
-# def email_out(recipient):
-#         from_email = Email(MY_EMAIL_ADDRESS)
-#         to_email = Email(MY_EMAIL_ADDRESS)
-#         subject = f"Bad News{recipient['user']}"
-#         message_text = f"You're going to be later for the following reasons: \n\n{text['tweet_text'] for text in recipient}"
-#         content = Content("text/plain", message_text)
-#         mail = Mail(from_email, subject, to_email, content)
-
-
 
 # writing data to file
 new_tweet_data = pd.DataFrame.from_dict(tweet_list)
@@ -178,7 +162,6 @@ tweet_data.to_csv(csv_file_path, index= False)
 
 # 3.) parse time of tweets to ensure that they're relevant
 
-# next message me abou the delay
 
 # 4.) deploy to heroku > schedule to run
 
