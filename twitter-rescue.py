@@ -7,7 +7,6 @@ import tweepy
 import pandas as pd
 import pytz
 from dateutil import tz
-import arrow
 import sendgrid
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
@@ -85,7 +84,6 @@ while len(tweet_list) < 20:
 
 
 
-
 # all totally useless changing the time so far
 # [ts['time'].to('UTC') for ts in tweet_list]
 
@@ -100,7 +98,7 @@ while len(tweet_list) < 20:
 user_travel = [{'user' : 'harrison', 'commutes' : {
         '0' : ['6 train', '7 train', 'Northbound E', 'Southbound E', 'Southbound A', 'Northbound A'],
         '1' : ['7 train', '6 train'],
-        '2' : ['6 train', '7 train', 'e train', 'a train'],
+        '2' : ['6 train', '6 train', 'e train', 'a train'],
         '3' : ['7 train', '6 train'],
         '4' : ['7 train', '6 train'],}},
               {'user' : 'user2', 'commutes' : {'6' : ['3 train', '2 train'], '5' : ['a train', 'c train']}}]
@@ -117,11 +115,11 @@ for user in user_travel:
         if today not in list(user['commutes'].keys()):
                 pass
         else:
-                users_to_email.append({'user' : user['user'], 'tweet_text' : []})
                 list_count += 1
                 for twit in tweet_list:
                         for commute in user['commutes'][today]:
                                 if commute in twit['text']and any(delay in twit['text'] for delay in delay_word):
+                                        users_to_email.append({'user' : user['user'], 'tweet_text' : []})
                                         users_to_email[list_count]['tweet_text'].append(twit['text'])
 
 
