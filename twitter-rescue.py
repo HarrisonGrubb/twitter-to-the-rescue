@@ -135,15 +135,15 @@ for recipient in users_to_email:
 # breakpoint()
 
 # writing data to file
-new_tweet_data = pd.DataFrame.from_dict(tweet_list)
+# new_tweet_data = pd.DataFrame.from_dict(tweet_list)
 
-csv_file_path = os.path.join(os.path.dirname(__file__), "data", 'data.csv')
-old_tweet_data = pd.read_csv(csv_file_path)
+# csv_file_path = os.path.join(os.path.dirname(__file__), "data", 'data.csv')
+# old_tweet_data = pd.read_csv(csv_file_path)
 
-tweet_data = new_tweet_data.append(old_tweet_data)
-tweet_data.drop_duplicates()
+# tweet_data = new_tweet_data.append(old_tweet_data)
+# tweet_data.drop_duplicates()
 
-tweet_data.to_csv(csv_file_path, index= False)
+# tweet_data.to_csv(csv_file_path, index= False)
 
 #https://www.afternerd.com/blog/python-string-contains/
 # timezone question
