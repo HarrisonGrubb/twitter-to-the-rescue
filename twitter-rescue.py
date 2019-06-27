@@ -98,7 +98,7 @@ while len(tweet_list) < 20:
 user_travel = [{'user' : 'harrison', 'commutes' : {
         '0' : ['6 train', '7 train', 'Northbound E', 'Southbound E', 'Southbound A', 'Northbound A'],
         '1' : ['7 train', '6 train'],
-        '2' : ['6 train', '6 train', 'e train', 'a train'],
+        '2' : ['6 train', '7 train', 'Northbound E', 'Southbound E', 'Southbound A', 'Northbound A'],
         '3' : ['7 train', '6 train'],
         '4' : ['7 train', '6 train'],}},
               {'user' : 'user2', 'commutes' : {'6' : ['3 train', '2 train'], '5' : ['a train', 'c train']}}]
