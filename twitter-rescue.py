@@ -20,7 +20,7 @@ ACCESS_TOKEN_SECRET = os.environ.get("TWITTER_ACCESS_TOKEN_SECRET")
 SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "OOPS, please set env var called 'SENDGRID_API_KEY'")
 MY_ADDRESS = os.environ.get("MY_EMAIL_ADDRESS", "OOPS, please set env var called 'MY_EMAIL_ADDRESS'")
 sgclient = SendGridAPIClient(SENDGRID_API_KEY) #> <class 'sendgrid.sendgrid.SendGridAPIClient>
-
+SENDGRID_TEMPLATE_ID = os.environ.get("SENDGRID_TEMPLATE_ID", "OOPS, please set env var called 'SENDGRID_TEMPLATE_ID")
 # AUTHENTICATE
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
@@ -42,10 +42,18 @@ utc = pytz.timezone('UTC')
 
 #function for later
 def email_out(reciever, delays):
-        subject = "Bummer "+reciever
-        html_content = "You're going to be late for the following reasons \n" + delays
-        
-        message = Mail(from_email=MY_ADDRESS, to_emails=MY_ADDRESS, subject=subject, html_content=html_content)
+        template_data = {
+                "firstName" : reciever,
+                "text": delays}  
+    
+        sgclient = SendGridAPIClient(SENDGRID_API_KEY)
+        from_email = MY_ADDRESS
+        to_email = MY_ADDRESS
+        message = Mail(from_email, to_email)
+        print("MESSAGE:", type(message))
+
+        message.template_id = SENDGRID_TEMPLATE_ID # see receipt.html for the template's structure
+        message.dynamic_template_data = template_data        
         try:
                 response = sgclient.send(message)
                 print("RESPONSE:", type(response)) #> <class 'python_http_client.client.Response'>
@@ -54,7 +62,7 @@ def email_out(reciever, delays):
                 print(response.headers)
 
         except Exception as e:
-                print("OOPS", e.message)
+                print("OOPS", e)
 
 
 
@@ -126,13 +134,13 @@ for user in user_travel:
 for recipient in users_to_email:
         reciever = recipient['user']
         delays = recipient['tweet_text']
-        reciever = str(reciever)
-        delays = str(delays)        
+        reciever = str(reciever)        
         email_out(reciever, delays)
 
 
 
-# breakpoint()
+
+
 
 # writing data to file
 # new_tweet_data = pd.DataFrame.from_dict(tweet_list)
@@ -160,8 +168,7 @@ for recipient in users_to_email:
 
 # 3.) parse time of tweets to ensure that they're relevant
 
-
-# 4.) deploy to heroku > schedule to run
+# Fix template at this point
 
 limit = client.rate_limit_status()
 print(limit['resources']['statuses']['/statuses/user_timeline'])
