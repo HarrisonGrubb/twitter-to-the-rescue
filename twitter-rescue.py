@@ -44,7 +44,7 @@ utc = pytz.timezone('UTC')
 def email_out(reciever, delays):
         template_data = {
                 "firstName" : reciever,
-                "text": delays}  
+                "delay": delays}  
     
         sgclient = SendGridAPIClient(SENDGRID_API_KEY)
         from_email = MY_ADDRESS
@@ -168,7 +168,7 @@ for recipient in users_to_email:
 
 # 3.) parse time of tweets to ensure that they're relevant
 
-# Fix template at this point
+# Fix template at this point 
 
 limit = client.rate_limit_status()
 print(limit['resources']['statuses']['/statuses/user_timeline'])
