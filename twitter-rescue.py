@@ -6,10 +6,11 @@ from dotenv import load_dotenv
 import tweepy
 import pandas as pd
 import pytz
-from dateutil import tz
 import sendgrid
 from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
+
+
 load_dotenv()
 
 
@@ -19,10 +20,11 @@ ACCESS_TOKEN = os.environ.get("TWITTER_ACCESS_TOKEN")
 ACCESS_TOKEN_SECRET = os.environ.get("TWITTER_ACCESS_TOKEN_SECRET")
 SENDGRID_API_KEY = os.environ.get("SENDGRID_API_KEY", "OOPS, please set env var called 'SENDGRID_API_KEY'")
 MY_ADDRESS = os.environ.get("MY_EMAIL_ADDRESS", "OOPS, please set env var called 'MY_EMAIL_ADDRESS'")
-sgclient = SendGridAPIClient(SENDGRID_API_KEY) #> <class 'sendgrid.sendgrid.SendGridAPIClient>
 SENDGRID_TEMPLATE_ID = os.environ.get("SENDGRID_TEMPLATE_ID", "OOPS, please set env var called 'SENDGRID_TEMPLATE_ID")
+
 # AUTHENTICATE
 
+sgclient = SendGridAPIClient(SENDGRID_API_KEY) #> <class 'sendgrid.sendgrid.SendGridAPIClient>
 auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
 auth.set_access_token(ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
 sg = sendgrid.SendGridAPIClient(SENDGRID_API_KEY)
@@ -40,7 +42,7 @@ data = client.user_timeline('NYCTSubway', exclude_replies = True , include_rts =
 #timezone fix
 utc = pytz.timezone('UTC')
 
-#function for later
+#function to email out the delays
 def email_out(reciever, delays):
         template_data = {
                 "firstName" : reciever,
@@ -92,15 +94,6 @@ while len(tweet_list) < 20:
 
 
 
-# all totally useless changing the time so far
-# [ts['time'].to('UTC') for ts in tweet_list]
-
-
-# [datetime.strptime(str(ts['time']), "%Y-%m-%d %H:%M:%S") for ts in tweet_list]
-# [ts['time'].replace(tzinfo = timezone('UTC')) for ts in tweet_list]
-
-# [print(type(ts['time'])) for ts in tweet_list]
-# [print(ts['time'].strftime("%Y-%m-%d %H:%M:%S %Z%z")) for ts in tweet_list]
 
 
 user_travel = [{'user' : 'harrison', 'commutes' : {
@@ -118,7 +111,7 @@ today = str(datetime.now().weekday())
 users_to_email = []
 list_count = -1
 
-
+# finding relevant train alerts in the list of tweets
 for user in user_travel:
         if today not in list(user['commutes'].keys()):
                 pass
@@ -130,7 +123,7 @@ for user in user_travel:
                                         users_to_email.append({'user' : user['user'], 'tweet_text' : []})
                                         users_to_email[list_count]['tweet_text'].append(twit['text'])
 
-
+#mailing the user their notifications
 for recipient in users_to_email:
         reciever = recipient['user']
         delays = recipient['tweet_text']
@@ -153,35 +146,26 @@ for recipient in users_to_email:
 
 # tweet_data.to_csv(csv_file_path, index= False)
 
+# Help attribution
+
 #https://www.afternerd.com/blog/python-string-contains/
 # timezone question
 #https://stackoverflow.com/questions/6935225/twitter-time-date-stamp-which-time-zone-is-it
-
-
-# convert to dict
-# data[0].__dict__
-#data[0].text accessing elements
-
+# heroku deploy adapted from Prof Rossetti
 
 ###### ROADMAP
 
+#Parse time of tweets to ensure that they're relevant
 
-# 3.) parse time of tweets to ensure that they're relevant
+# [ts['time'].to('UTC') for ts in tweet_list]
 
-# Fix template at this point 
+
+# [datetime.strptime(str(ts['time']), "%Y-%m-%d %H:%M:%S") for ts in tweet_list]
+# [ts['time'].replace(tzinfo = timezone('UTC')) for ts in tweet_list]
+
+# [print(type(ts['time'])) for ts in tweet_list]
+# [print(ts['time'].strftime("%Y-%m-%d %H:%M:%S %Z%z")) for ts in tweet_list]
 
 limit = client.rate_limit_status()
 print(limit['resources']['statuses']['/statuses/user_timeline'])
 
-# breakpoint()
-
-
-# for twit in tweet_list:
-#         for user in user_travel:
-#                 if today not in list(user['commutes'].keys()):
-#                         pass
-#                 else:
-#                         for commute in user['commutes'][today]:
-#                                 if commute in twit['text']and any(delay in twit['text'] for delay in delay_word):
-#                                         users_to_email.append({'user' : user['user'], 'tweet_text' : twit['text']})
-# ^  original for loop to find compare travelers and delay tweets works but is jenky
