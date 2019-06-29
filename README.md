@@ -76,6 +76,13 @@ If you've followed the above steps correctly **and** there is a delay you'll get
 
 You will also get a notice of how many Twitter API calls you have left.  You have a maximum of 900 per 15 minutes. Unless you dramatically alter the amount of tweets you want in the variable tweet_list you won't run out of API calls.  
 
+## Deploying to Heroku
+
+If you would like to deploy this to Heroku please follow the instructions below from my professor.  You can simply replace the example app with this one and you'll be up in the cloud in no time.
+
+https://github.com/prof-rossetti/nyu-info-2335-201905/tree/master/exercises/deploying-services
+
+
 ## Future Roadmap
 
 There are some items I'm working on that may or may not make it into the submitted version of this project.  They're listed below in order of importance.
