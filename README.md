@@ -82,7 +82,6 @@ If you would like to deploy this to Heroku please follow the instructions below 
 
 https://github.com/prof-rossetti/nyu-info-2335-201905/tree/master/exercises/deploying-services
 
-
 ## Future Roadmap
 
 There are some items I'm working on that may or may not make it into the submitted version of this project.  They're listed below in order of importance.

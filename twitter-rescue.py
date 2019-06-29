@@ -66,8 +66,7 @@ def email_out(reciever, delays):
         except Exception as e:
                 print("OOPS", e)
 
-
-
+        
 
 tweet_list = []
 for t in range(0, len(data)):
@@ -77,6 +76,7 @@ for t in range(0, len(data)):
         'id' : data[t].id})
 tweet_id = [ids['id'] for ids in tweet_list]
 
+loop = 0
 #call to get the most recent tweet > then from that tweet update the max id
 max_id = tweet_list[-1]['id']
 while len(tweet_list) < 20:
@@ -90,7 +90,12 @@ while len(tweet_list) < 20:
                                 'time' : while_data[t].created_at.astimezone(utc),
                                 'id' : while_data[t].id})
                         tweet_id.append(while_data[t].id)
+        loop += 1
         max_id = tweet_list[-1]['id']
+        if loop >= 20:
+                break
+        else:
+                pass
 
 
 
@@ -99,10 +104,10 @@ while len(tweet_list) < 20:
 user_travel = [{'user' : 'harrison', 'commutes' : {
         '0' : ['6 train', '7 train', 'Northbound E', 'Southbound E', 'Southbound A', 'Northbound A'],
         '1' : ['7 train', '6 train'],
-        '2' : ['6 train', '7 train', 'Northbound E', 'Southbound E', 'Southbound A', 'Northbound A'],
+        '5' : ['6 train', '7 train', 'Northbound E', 'Southbound E', 'Southbound A', 'Northbound A'],
         '3' : ['7 train', '6 train'],
         '4' : ['7 train', '6 train'],}},
-              {'user' : 'user2', 'commutes' : {'6' : ['3 train', '2 train'], '5' : ['a train', 'c train']}}]
+              {'user' : 'user2', 'commutes' : {'5' : ['3 train', '2 train'], '6' : ['Southbound D', 'Northbound D', "Southbound N"]}}]
 
 delay_word = ['delay', 'slow', 'maintenance', 'brakes']
 
@@ -124,11 +129,15 @@ for user in user_travel:
                                         users_to_email[list_count]['tweet_text'].append(twit['text'])
 
 #mailing the user their notifications
+#screening out any false positives that may have created an empty list
 for recipient in users_to_email:
-        reciever = recipient['user']
-        delays = recipient['tweet_text']
-        reciever = str(reciever)        
-        email_out(reciever, delays)
+        if not recipient['tweet_text']:
+                print("empty list")
+        else:
+                reciever = recipient['user']
+                delays = recipient['tweet_text']
+                reciever = str(reciever)        
+                email_out(reciever, delays)
 
 
 
