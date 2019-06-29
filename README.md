@@ -64,4 +64,23 @@ Additionally, if you take a train with letters in it, for example the A Train, i
 * This is good: "Northbound E", "Southbound E"
 * This will have too many false positives: "E train"
 
-If you'd like for the tweets you've captured to be stored locally you can uncomment the code after the comment writing data to file.  
+If you'd like for the tweets you've captured to be stored locally you can uncomment the code after the comment writing data to file.
+
+## Running the code
+
+If you've opted to run this locally make sure you're still in the project's local repo.  You can run the code with the below command.
+
+``` python twitter-rescue.py ```
+
+If you've followed the above steps correctly **and** there is a delay you'll get a 202 response from sendgrid :D.  If there is no delay but you see a Twitter API call count the program also ran correctly. 
+
+You will also get a notice of how many Twitter API calls you have left.  You have a maximum of 900 per 15 minutes. Unless you dramatically alter the amount of tweets you want in the variable tweet_list you won't run out of API calls.  
+
+## Future Roadmap
+
+There are some items I'm working on that may or may not make it into the submitted version of this project.  They're listed below in order of importance.
+
+* Adjusting the time of the tweets: I can't get pendulum installed
+* Integrating with Google Sheets to store the tweets in the cloud
+* Through Google Sheets and Forms I'd like to be able to adjust my travel schedule without touching my code
+* Occasionally I will get multiple emails from a single run
