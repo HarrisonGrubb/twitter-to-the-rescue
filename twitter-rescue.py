@@ -155,25 +155,6 @@ for recipient in users_to_email:
 
 # tweet_data.to_csv(csv_file_path, index= False)
 
-# Help attribution
-
-#https://www.afternerd.com/blog/python-string-contains/
-# timezone question
-#https://stackoverflow.com/questions/6935225/twitter-time-date-stamp-which-time-zone-is-it
-# heroku deploy adapted from Prof Rossetti
-
-###### ROADMAP
-
-#Parse time of tweets to ensure that they're relevant
-
-# [ts['time'].to('UTC') for ts in tweet_list]
-
-
-# [datetime.strptime(str(ts['time']), "%Y-%m-%d %H:%M:%S") for ts in tweet_list]
-# [ts['time'].replace(tzinfo = timezone('UTC')) for ts in tweet_list]
-
-# [print(type(ts['time'])) for ts in tweet_list]
-# [print(ts['time'].strftime("%Y-%m-%d %H:%M:%S %Z%z")) for ts in tweet_list]
 
 limit = client.rate_limit_status()
 print(limit['resources']['statuses']['/statuses/user_timeline'])

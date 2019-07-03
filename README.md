@@ -41,7 +41,7 @@ Open that file and fill in the below variables with your own unique login creden
 * ACCESS_TOKEN_SECRET = your-key-here
 * SENDGRID_API_KEY = your-key-here
 * MY_ADDRESS = your-email-address-here
-* SENDGRID_TEMPLATE_ID = name-of-the-sendgrid-template
+* SENDGRID_TEMPLATE_ID = ID-of-the-sendgrid-template
 
 ## About to run
 
@@ -59,12 +59,13 @@ Navigate through the nested dictionary replacing my name with yours.  The day in
 * 5 = Saturday
 * 7 = Sunday
 
-Additionally, if you take a train with letters in it, for example the A Train, include both directions (example below).  This is particularly relevant for people who take the A Train.  The program will pick up every instance of the following passage as a delay: "6 trains are running express after **a train's** brakes were activated".  
+Additionally, if you take a train with letters in it, for example the A Train, include both directions (example below).  This is particularly relevant for people who take the A Train.  If you are monitoring for A Train delays the program will incorrectly flag the following instance as a delay: "6 trains are running express after **a train's** brakes were activated".  
 
 * This is good: "Northbound E", "Southbound E"
 * This will have too many false positives: "E train"
 
 If you'd like for the tweets you've captured to be stored locally you can uncomment the code after the comment writing data to file.
+*Making sure to check the file path is working correctly if you do so*
 
 ## Running the code
 
@@ -90,3 +91,20 @@ There are some items I'm working on that may or may not make it into the submitt
 * Integrating with Google Sheets to store the tweets in the cloud
 * Through Google Sheets and Forms I'd like to be able to adjust my travel schedule without touching my code
 * Occasionally I will get multiple emails from a single run
+
+## Project Attribution
+
+Heroku deployment is all thanks to Professor Rossetti's guide
+https://github.com/prof-rossetti/nyu-info-2335-201905/tree/master/exercises/deploying-services
+
+Help trying to adjust datetime: Prof Rossetti, Supriya, and the below links
+https://www.afternerd.com/blog/python-string-contains/
+https://stackoverflow.com/questions/6935225/twitter-time-date-stamp-which-time-zone-is-it
+https://stackoverflow.com/questions/9847213/how-do-i-get-the-day-of-week-given-a-date-in-python
+
+Sendgrid & Twitter guides
+https://github.com/prof-rossetti/notification-service-py
+https://github.com/HarrisonGrubb/notification-service-py
+https://github.com/HarrisonGrubb/shopping-cart-project
+https://github.com/prof-rossetti/shopping-cart-demo-2019
+https://sendgrid.com/docs/for-developers/sending-email/using-handlebars/
