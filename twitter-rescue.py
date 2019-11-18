@@ -79,8 +79,8 @@ tweet_id = [ids['id'] for ids in tweet_list]
 loop = 0
 #call to get the most recent tweet > then from that tweet update the max id
 max_id = tweet_list[-1]['id']
-while len(tweet_list) < 20:
-        while_data = client.user_timeline('NYCTSubway',max_id = max_id, exclude_replies = True , include_rts = False)
+while len(tweet_list) < 1000:
+        while_data = client.user_timeline('NYCTSubway',max_id = max_id, exclude_replies = False , include_rts = False)
         for t in range(0, len(while_data)):
                 if while_data[t].id in tweet_id:
                         pass
@@ -92,7 +92,7 @@ while len(tweet_list) < 20:
                         tweet_id.append(while_data[t].id)
         loop += 1
         max_id = tweet_list[-1]['id']
-        if loop >= 20:
+        if loop >= 1000:
                 break
         else:
                 pass
@@ -145,15 +145,15 @@ for recipient in users_to_email:
 
 
 # writing data to file
-# new_tweet_data = pd.DataFrame.from_dict(tweet_list)
+new_tweet_data = pd.DataFrame.from_dict(tweet_list)
 
-# csv_file_path = os.path.join(os.path.dirname(__file__), "data", 'data.csv')
-# old_tweet_data = pd.read_csv(csv_file_path)
+csv_file_path = os.path.join(os.path.dirname(__file__), "data", 'data.csv')
+old_tweet_data = pd.read_csv(csv_file_path)
 
-# tweet_data = new_tweet_data.append(old_tweet_data)
-# tweet_data.drop_duplicates()
+tweet_data = new_tweet_data.append(old_tweet_data)
+tweet_data.drop_duplicates()
 
-# tweet_data.to_csv(csv_file_path, index= False)
+tweet_data.to_csv(csv_file_path, index= False)
 
 
 limit = client.rate_limit_status()
